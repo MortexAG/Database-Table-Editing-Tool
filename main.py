@@ -44,7 +44,15 @@ try :
         newWindow.destroy()
         table_contents()
 
-        # Toplevel widget
+        # New Connection To Refresh The Database
+
+      mydb = mysql.connector.connect (
+      host = db_host,
+      user = db_user,
+      password = db_pass,
+      database = db_name
+        )
+      cursor = mydb.cursor()
 
         # sets the geometry of toplevel
       newWindow.geometry("840x600")
@@ -91,6 +99,34 @@ try :
             restart()
         # The Delete Button
       Button(newWindow, text="Delete", command=id_delete ,activebackground="grey", activeforeground="grey").grid(row=2, column=0)
+
+      # CONFIRMATION BUTTON
+
+      def confirm_delete_all():
+        delete_all = Toplevel(top)
+        delete_all.title("Delete All Confirmation")
+        delete_all.geometry("300x300")
+        Button(delete_all, text="CONFIRM DELETE ALL", command=delete_all_func, activebackground="grey", activeforeground="grey", pady=10).place(relx=0.5, rely=0.5, anchor=CENTER)
+        global close_confirmation
+        def close_confirmation():
+          delete_all.destroy()
+
+      # THE DELETE ALL FUNCTION
+      def delete_all_func():
+        for contents in result_id:
+          item = str(contents)
+          cleanitem = item.translate(str.maketrans('', '', string.punctuation))
+          sql_delete_all = """ DELETE FROM `{}` WHERE `id` = '{}' """.format(db_table, cleanitem)
+          cursor.execute(sql_delete_all)
+          mydb.commit()
+        restart()
+        close_confirmation()
+
+
+
+      # THE DELETE ALL BUTTON
+
+      Button(newWindow, text="Delete All", command=confirm_delete_all, activebackground="grey", activeforeground="grey").grid(row=4, column=0)
 
       #
       # The Username Label, Table
