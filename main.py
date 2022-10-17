@@ -274,11 +274,26 @@ try :
 
       inpmsg = inputmsg.get()
 
-      lbl.config(text = "{} Input Successful: ".format(db_column1)+inpuser)
       sql = """ INSERT INTO `{}` ({}, {}, {}, {}) VALUES (0, '{}', '{}', '{}')""".format(db_table, db_table_primary, db_column1, db_column2, db_column3, inpuser, inpuid, inpmsg)
-      cursor.execute(sql)
-      mydb.commit()
+      try:
+        cursor.execute(sql)
+        mydb.commit()
+        lbl.config(text = "{} Input Successful: ".format(db_column1)+inpuser, bg="green")
+      except:
+        lbl.config(text = "Input Error Try Again Or Restart The Program", bg="red")
 
+
+    # Sign Out
+
+    def sign_out():
+      try:
+        file = open("./.env", 'w')
+        signout = "db_password =  \ndb_username =  \ndb_hostname =  \ndb_name =  \ndb_table =  \ndb_table_primary =  \ndb_column1 =  \ndb_column2 =  \ndb_column3 = "
+        file.write(signout)
+        file.close()
+        messagebox.showinfo(title="Sign Out Successful", message="Sign Out Successful Restart The Program To Sign In Again")
+      except:
+        messagebox.showerror(title="Error Signing Out", message="Try Signing Out Again Or Restart The Program Then Try Again")
     # TextBox Creation
     username = tk.Label(top, text = "Add {} Here".format(db_column1))
     username.pack()
@@ -310,6 +325,9 @@ try :
 
     mylist = Button(top, text="Show Table Contents", command= table_contents, activebackground="blue", activeforeground="magenta", pady=10)
     mylist.pack()
+
+    signout = Button(top, text="Sign Out", command= sign_out, activebackground="blue", activeforeground="magenta", pady=10)
+    signout.pack(side="bottom")
 
     lbl = tk.Label(top, text = "Made By MortexAG")
     lbl.pack(side="bottom")
