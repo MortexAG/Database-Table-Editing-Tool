@@ -16,6 +16,7 @@ try :
     db_host = os.environ['db_hostname']
     db_name = os.environ['db_name']
     db_table = os.environ['db_table']
+    db_table_primary = os.environ['db_table_primary']
     db_column1 = os.environ['db_column1']
     db_column2 = os.environ['db_column2']
     db_column3 = os.environ['db_column3']
@@ -58,7 +59,7 @@ try :
       newWindow.geometry("840x600")
 
         # The SQL To Fetch The Rows
-      sql_id = """ SELECT id FROM `{}` """.format(db_table)
+      sql_id = """ SELECT {} FROM `{}` """.format(db_table_primary, db_table)
       cursor.execute(sql_id)
       result_id = cursor.fetchall()
 
@@ -78,7 +79,7 @@ try :
       # The ID Label, Table, And Delete Button
       #
 
-      id_lb = Label(newWindow, text="ID")
+      id_lb = Label(newWindow, text="{}".format(db_table_primary))
       id_lb.grid(row=0, column=0)
 
       id = Listbox(newWindow, height = 10, width = 16, bg = "white", activestyle = 'dotbox', font = "Helvetica", fg = "Black")
@@ -92,7 +93,7 @@ try :
         for i in id.curselection():
             item = str(id.get(i))
             cleanitem = item.translate(str.maketrans('', '', string.punctuation))
-            sql_delete = """ DELETE FROM `{}` WHERE `id` = '{}' """.format(db_table, cleanitem)
+            sql_delete = """ DELETE FROM `{}` WHERE `{}` = '{}' """.format(db_table,db_table_primary, cleanitem)
             cursor.execute(sql_delete)
             mydb.commit()
             #Label(newWindow, text="Row : {} Was Deleted Succesfully".format(cleanitem)).grid(row=5, column=2)
@@ -116,7 +117,7 @@ try :
         for contents in result_id:
           item = str(contents)
           cleanitem = item.translate(str.maketrans('', '', string.punctuation))
-          sql_delete_all = """ DELETE FROM `{}` WHERE `id` = '{}' """.format(db_table, cleanitem)
+          sql_delete_all = """ DELETE FROM `{}` WHERE `{}` = '{}' """.format(db_table, db_table_primary, cleanitem)
           cursor.execute(sql_delete_all)
           mydb.commit()
         restart()
@@ -262,7 +263,7 @@ try :
         cursor.execute(sql_reset_id)
         mydb.commit()
 
-      reset = Button(newWindow, text="Reset ID To Zero", command=reset_primary, activebackground='grey', activeforeground='grey', pady=10)
+      reset = Button(newWindow, text="Reset {} To Zero".format(db_table_primary), command=reset_primary, activebackground='grey', activeforeground='grey', pady=10)
       reset.grid(row=9, column=2)
 
 
@@ -274,7 +275,7 @@ try :
       inpmsg = inputmsg.get()
 
       lbl.config(text = "{} Input Successful: ".format(db_column1)+inpuser)
-      sql = """ INSERT INTO `{}` (id, {}, {}, {}) VALUES (0, '{}', '{}', '{}')""".format(db_table, db_column1, db_column2, db_column3, inpuser, inpuid, inpmsg)
+      sql = """ INSERT INTO `{}` ({}, {}, {}, {}) VALUES (0, '{}', '{}', '{}')""".format(db_table, db_table_primary, db_column1, db_column2, db_column3, inpuser, inpuid, inpmsg)
       cursor.execute(sql)
       mydb.commit()
 
@@ -373,6 +374,14 @@ except:
       db_input_table = Entry(Signin, width = 15)
       db_input_table.pack()
 
+      # Insert The Table Primary (Auto Incriment) here
+
+      db_table_primary = tk.Label(Signin, text = "Add Table Primary (Auto Incriment) Here")
+      db_table_primary.pack()
+
+      db_input_table_primary = Entry(Signin, width = 15)
+      db_input_table_primary.pack()
+
         # Insert The Database First Column Name here
 
       db_column1 = tk.Label(Signin, text = "Add Database Column 1 Name Here")
@@ -404,6 +413,7 @@ except:
         db_inputhostsign = db_inputhost.get()
         db_inputnamesign = db_inputname.get()
         db_input_table_sign = db_input_table.get()
+        db_input_table_primary_sign = db_input_table_primary.get()
         db_input_column1_sign = db_input_column1.get()
         db_input_column2_sign = db_input_column2.get()
         db_input_column3_sign = db_input_column3.get()
@@ -422,7 +432,7 @@ except:
           global acstate_color
           acstate_color = "Green"
           file = open("./.env", 'w')
-          signin = "db_password = {} \ndb_username = {} \ndb_hostname = {} \ndb_name = {} \ndb_table = {} \ndb_column1 = {} \ndb_column2 = {} \ndb_column3 = {}".format(db_inputpasssign, db_inputusersign, db_inputhostsign, db_inputnamesign , db_input_table_sign, db_input_column1_sign, db_input_column2_sign, db_input_column3_sign)
+          signin = "db_password = {} \ndb_username = {} \ndb_hostname = {} \ndb_name = {} \ndb_table = {} \ndb_table_primary = {} \ndb_column1 = {} \ndb_column2 = {} \ndb_column3 = {}".format(db_inputpasssign, db_inputusersign, db_inputhostsign, db_inputnamesign , db_input_table_sign, db_input_table_primary_sign, db_input_column1_sign, db_input_column2_sign, db_input_column3_sign)
           file.write(signin)
           file.close()
           readme = open("README.txt", 'w')
