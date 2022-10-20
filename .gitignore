@@ -180,3 +180,6 @@ pip-selfcheck.json
 README.txt
 
 debugging.py
+
+.env copy
+.envbackup
